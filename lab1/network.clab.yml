@@ -1,48 +1,60 @@
 name: company_network
 
 mgmt:
-    network: mgmt-network
-    ipv4_subnet: 192.168.100.0/24
+    network: statics
+    ipv4-subnet: 172.20.20.0/24
 
 topology:
   kinds:
     vr-ros:
-      #image: vrnetlab/vr-routeros:latest
-      image: iparchitechs/chr:long-term
+      image: vrnetlab/vr-routeros:latest
   nodes:
     R01:
       kind: vr-ros
-      mgmt_ipv4: 192.168.100.1
+      mgmt-ipv4: 172.20.20.1
+      memory: 512MB
+      cpu: 1
+      ports: 
+        - 10122:22
+        - 10180:80
+      #binds:
+      #  - setup_microtik.sh:/tmp/setup.sh
+      #exec:
+      #  - sh /tmp/setup.sh 192.168.122.1 10.1.1  
 
     SW01:
       kind: vr-ros
-      mgmt_ipv4: 192.168.100.2
+      memory: 512MB
+      cpu: 1
+      mgmt-ipv4: 172.20.20.2
 
     SW02:
       kind: vr-ros
-      mgmt_ipv4: 192.168.100.3
+      memory: 512MB
+      cpu: 1
+      mgmt-ipv4: 172.20.20.3
 
     SW03:
       kind: vr-ros
-      mgmt_ipv4: 192.168.100.4
+      mgmt-ipv4: 172.20.20.4
     
     PC1:
       kind: linux
       image: ubuntu:latest
       memory: 2564MB
       cpu: 0.5
-      mgmt_ipv4: 192.169.100.5
+      mgmt-ipv4: 172.20.20.5
     
-    PC1:
+    PC2:
       kind: linux
       image: alpine:latest
       memory: 64MB
       cpu: 0.5
-      mgmt_ipv4: 192.169.100.6
+      mgmt-ipv4: 172.20.20.6
 
-links:
-  - endpoints: ["PC1:eth1", "R01:eth1"]
-  - endpoints: ["R01:eth2", "PC2:eth1"]
+  links:
+    - endpoints: ["PC1:eth1", "R01:eth1"]
+    - endpoints: ["R01:eth2", "PC2:eth1"]
 
 
 
