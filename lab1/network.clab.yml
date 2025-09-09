@@ -1,17 +1,17 @@
 name: company_network
 
 mgmt:
-    network: statics
+    network: mgmt
     ipv4-subnet: 172.20.20.0/24
 
 topology:
   kinds:
     vr-ros:
-      image: vrnetlab/vr-routeros:latest
+      image: vrnetlab/mikrotik_routeros:6.47.9
   nodes:
     R01:
       kind: vr-ros
-      mgmt-ipv4: 172.20.20.1
+      mgmt-ipv4: 172.20.20.2
       memory: 512MB
       cpu: 1
       ports: 
@@ -26,31 +26,33 @@ topology:
       kind: vr-ros
       memory: 512MB
       cpu: 1
-      mgmt-ipv4: 172.20.20.2
+      mgmt-ipv4: 172.20.20.3
 
     SW02:
       kind: vr-ros
       memory: 512MB
       cpu: 1
-      mgmt-ipv4: 172.20.20.3
+      mgmt-ipv4: 172.20.20.4
 
     SW03:
       kind: vr-ros
-      mgmt-ipv4: 172.20.20.4
+      memory: 512MB
+      cpu: 1
+      mgmt-ipv4: 172.20.20.5
     
     PC1:
       kind: linux
       image: ubuntu:latest
       memory: 2564MB
       cpu: 0.5
-      mgmt-ipv4: 172.20.20.5
+      mgmt-ipv4: 172.20.20.6
     
     PC2:
       kind: linux
       image: alpine:latest
       memory: 64MB
       cpu: 0.5
-      mgmt-ipv4: 172.20.20.6
+      mgmt-ipv4: 172.20.20.7
 
   links:
     - endpoints: ["PC1:eth1", "R01:eth1"]
