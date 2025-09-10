@@ -11,34 +11,25 @@ topology:
   nodes:
     R01:
       kind: vr-ros
+      image: vrnetlab/mikrotik_routeros:6.47.9
       mgmt-ipv4: 172.20.20.2
-      memory: 512MB
-      cpu: 1
-      ports: 
-        - 10122:22
-        - 10180:80
-      #binds:
-      #  - setup_microtik.sh:/tmp/setup.sh
-      #exec:
-      #  - sh /tmp/setup.sh 192.168.122.1 10.1.1  
+      startup-config: setup_R01.rsc
 
     SW01:
       kind: vr-ros
-      memory: 512MB
-      cpu: 1
       mgmt-ipv4: 172.20.20.3
+      startup-config: setup_SW01.rsc
+
 
     SW02:
       kind: vr-ros
-      memory: 512MB
-      cpu: 1
       mgmt-ipv4: 172.20.20.4
+      startup-config: setup_SW02.rsc
 
     SW03:
       kind: vr-ros
-      memory: 512MB
-      cpu: 1
       mgmt-ipv4: 172.20.20.5
+      startup-config: setup_SW03.rsc 
     
     PC1:
       kind: linux
@@ -46,6 +37,7 @@ topology:
       memory: 2564MB
       cpu: 0.5
       mgmt-ipv4: 172.20.20.6
+      startup-config: setup_PC1.sh 
     
     PC2:
       kind: linux
@@ -53,6 +45,7 @@ topology:
       memory: 64MB
       cpu: 0.5
       mgmt-ipv4: 172.20.20.7
+      startup-config: setup_PC2.sh 
 
   links:
     - endpoints: ["R01:eth1", "SW01:eth1"]
