@@ -37,15 +37,20 @@ topology:
       memory: 2564MB
       cpu: 0.5
       mgmt-ipv4: 172.20.20.6
-      startup-config: setup_PC1.sh 
-    
+      binds:
+        - ./setup_PC1.sh:/root/setup_PC1.sh
+      exec:
+        - bash /root/setup_PC1.sh
     PC2:
       kind: linux
       image: alpine:latest
       memory: 64MB
       cpu: 0.5
       mgmt-ipv4: 172.20.20.7
-      startup-config: setup_PC2.sh 
+      binds:
+        - ./setup_PC1.sh:/root/setup_PC2.sh
+      exec:
+        - bash /root/setup_PC2.sh
 
   links:
     - endpoints: ["R01:eth1", "SW01:eth1"]
