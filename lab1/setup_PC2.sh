@@ -4,7 +4,7 @@ set -e
 apt-get update
 apt-get install -y isc-dhcp-client iproute2 iputils-ping net-tools
 
-dhclient -nw eth1
+dhclient -nw eth2
 
-ip addr show eth1
+ip addr show eth2
 
