@@ -1,5 +1,5 @@
 /system identity set name=SW01
-/user set admin password=12345
+/user set admin password=12345 group=full
 
 /interface bridge
 add name=bridge1 vlan-filtering=yes
