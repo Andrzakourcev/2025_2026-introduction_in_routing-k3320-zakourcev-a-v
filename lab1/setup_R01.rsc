@@ -1,7 +1,7 @@
 #Make vlans
 /interface vlan
-add interface=ether1 name=VLAN10 vlan-id=10
-add interface=ether1 name=VLAN20 vlan-id=20
+add interface=ether2 name=VLAN10 vlan-id=10
+add interface=ether2 name=VLAN20 vlan-id=20
 
 #ip gateway
 /ip address 
