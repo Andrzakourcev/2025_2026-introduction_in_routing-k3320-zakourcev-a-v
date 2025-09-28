@@ -1,10 +1,7 @@
-#!/bin/bash
-set -e 
+#!/bin/sh
+set -e
+ip link add link eth1 name VLAN10 type vlan id 20
 
-apt-get update
-apt-get install -y isc-dhcp-client iproute2 iputils-ping net-tools
+ip link set VLAN20 up
 
-dhclient -nw eth1
-
-ip addr show eth1
-
+dhclient -v VLAN20 || exit 0
