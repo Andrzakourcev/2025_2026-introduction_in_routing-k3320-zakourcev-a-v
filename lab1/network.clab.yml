@@ -1,65 +1,50 @@
-name: company_network
+name: lab1
 
 mgmt:
-    network: mgmt
-    ipv4-subnet: 172.20.20.0/24
+  network: my_mgmt
+  ipv4-subnet: 172.16.16.0/24
 
 topology:
   kinds:
     vr-ros:
       image: vrnetlab/mikrotik_routeros:6.47.9
+  
   nodes:
     R01:
       kind: vr-ros
-      image: vrnetlab/mikrotik_routeros:6.47.9
-      mgmt-ipv4: 172.20.20.2
-      startup-config: setup_R01.rsc
-
+      mgmt-ipv4: 172.16.16.150
+      startup-config: config/setup_R01.rsc
     SW01:
       kind: vr-ros
-      mgmt-ipv4: 172.20.20.3
-      startup-config: setup_SW01.rsc
-
-
+      mgmt-ipv4: 172.16.16.151
+      startup-config: config/setup_SW01.rsc
     SW02:
       kind: vr-ros
-      mgmt-ipv4: 172.20.20.4
-      startup-config: setup_SW02.rsc
-
+      mgmt-ipv4: 172.16.16.152
+      startup-config: config/setup_SW02.rsc
     SW03:
       kind: vr-ros
-      mgmt-ipv4: 172.20.20.5
-      startup-config: setup_SW03.rsc 
-    
+      mgmt-ipv4: 172.16.16.153
+      startup-config: config/setup_SW03.rsc
     PC1:
       kind: linux
-      image: ubuntu:latest
-      memory: 2564MB
-      cpu: 0.5
-      mgmt-ipv4: 172.20.20.6
+      image: alpine:latest
+      mgmt-ipv4: 172.16.16.2
       binds:
-        - ./setup_PC1.sh:/root/setup_PC1.sh
+        - ./config:/config
       exec:
-        - bash /root/setup_PC1.sh
+        - sh /config/setup_PC1.sh
     PC2:
       kind: linux
       image: alpine:latest
-      memory: 64MB
-      cpu: 0.5
-      mgmt-ipv4: 172.20.20.7
+      mgmt-ipv4: 172.16.16.3
       binds:
-        - ./setup_PC1.sh:/root/setup_PC2.sh
+        - ./config:/config
       exec:
-        - bash /root/setup_PC2.sh
-
+        - sh /config/setup_PC2.sh
   links:
     - endpoints: ["R01:eth1", "SW01:eth1"]
     - endpoints: ["SW01:eth2", "SW02:eth1"]
     - endpoints: ["SW01:eth3", "SW03:eth1"]
-    - endpoints: ["SW02:eth2", "PC1:eth1"]
+    - endpoints: ["SW02", "PC1:eth1"]
     - endpoints: ["SW03:eth2", "PC2:eth1"]
-
-
-
-
-      
