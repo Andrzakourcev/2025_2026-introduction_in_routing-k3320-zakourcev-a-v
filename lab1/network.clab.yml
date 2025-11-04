@@ -46,5 +46,5 @@ topology:
     - endpoints: ["R01:eth1", "SW01:eth1"]
     - endpoints: ["SW01:eth2", "SW02:eth1"]
     - endpoints: ["SW01:eth3", "SW03:eth1"]
-    - endpoints: ["SW02", "PC1:eth1"]
+    - endpoints: ["SW02:eth2", "PC1:eth1"]
     - endpoints: ["SW03:eth2", "PC2:eth1"]
