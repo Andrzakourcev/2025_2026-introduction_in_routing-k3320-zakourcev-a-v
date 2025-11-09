@@ -26,9 +26,10 @@ Date of finished: 09.11.2025
 
 Вам необходимо сделать сеть связи в трех геораспределенных офисах "RogaIKopita Games" изображенную на рисунке 1 в ContainerLab. Необходимо создать все устройства указанные на схеме и соединения между ними.
 
-https://itmo-ict-faculty.github.io/introduction-in-routing/education/labs2023_2024/lab2/multisite.png
+<img width="541" height="361" alt="image" src="https://github.com/user-attachments/assets/f3da6535-54a5-4ca3-8786-3e18bc56fcdf" />
 
 Помимо этого вам необходимо настроить IP адреса на интерфейсах.
 Создать DHCP сервера на роутерах в сторону клиентских устройств.
 Настроить статическую маршрутизацию.
 Настроить имена устройств, сменить логины и пароли.
+
