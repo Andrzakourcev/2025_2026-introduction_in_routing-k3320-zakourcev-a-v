@@ -18,6 +18,10 @@ Date of finished: 01.12.2025
 ## Цель работы
 Изучить протоколы OSPF и MPLS, механизмы организации EoMPLS.
 
+## Схема
+
+![telegram-cloud-photo-size-2-5291926486870855318-y](https://github.com/user-attachments/assets/e5726fc5-747f-4618-a3d6-7188302493ad)
+
 ## Конфигурация сети (YAML)
 Топология сети полностью повторяет структуру из предыдущих лабораторных заданий — развернуто 6 маршрутизаторов, один пользовательский компьютер и один хост, выполняющий роль SGI.
 
@@ -58,6 +62,10 @@ Date of finished: 01.12.2025
 - в /interface vpls задаётся remote-peer, равный loopback-адресу партнёрского PE-роутера;
 - далее VPLS-интерфейс и нужный физический порт добавляются в bridge.
 
+Соеденение:
+
+![telegram-cloud-photo-size-2-5291926486870855461-x](https://github.com/user-attachments/assets/cb58b8f0-09b7-4d00-a502-b3744f8e0b1f)
+
 ---
 
 ## Настройка компьютеров
@@ -68,14 +76,27 @@ Date of finished: 01.12.2025
 ## Результаты
 
 ### 1. OSPF
+
+![telegram-cloud-photo-size-2-5291926486870855405-y](https://github.com/user-attachments/assets/f3fbc20c-54ef-4464-9784-21a07eb461ec)
+
+![telegram-cloud-photo-size-2-5291926486870855406-y](https://github.com/user-attachments/assets/255624b4-bb23-407d-8bdf-05d908b1bd3d)
+
 Проверка таблиц маршрутизации подтверждает, что маршруты распространяются динамически — никаких статических маршрутов не используется.
 
 ### 2. MPLS
-- Без фильтрации: все доступные маршруты получают MPLS-метки.  
+- Без фильтрации: все доступные маршруты получают MPLS-метки.
+
 - С фильтрацией: метки назначаются только для префиксов loopback-интерфейсов, что можно увидеть в изменившемся выводе traceroute.
+
+![telegram-cloud-photo-size-2-5291926486870855445-y](https://github.com/user-attachments/assets/5640597b-e674-4545-a14d-a9312705d3fb)
+
+
+![telegram-cloud-photo-size-2-5291926486870855434-y](https://github.com/user-attachments/assets/5df07071-dce4-4415-be54-af92d6cc270d)
 
 ### 3. VPLS
 VPLS-туннель между NY и SPB успешно поднят, компьютеры на его концах оказываются в одной L2-домене и могут взаимодействовать напрямую.
+
+![telegram-cloud-photo-size-2-5291926486870855456-x](https://github.com/user-attachments/assets/768c1f67-af12-4cba-8b98-1dc1392f22ca)
 
 ---
 
