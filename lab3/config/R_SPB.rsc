@@ -1,3 +1,10 @@
+/user
+add name=andrey password=andrey group=full
+remove admin
+
+/system identity
+set name=R.SPB
+
 /ip address
 add address=10.20.1.1/30 interface=ether2
 add address=10.20.2.1/30 interface=ether3
@@ -55,10 +62,3 @@ add disabled=no name=SGIPC remote-peer=10.255.255.6 cisco-style=yes cisco-style-
 /interface bridge port
 add interface=ether2 bridge=vpn
 add interface=SGIPC bridge=vpn
-
-/user
-add name=andrey password=andrey group=full
-remove admin
-
-/system identity
-set name=R.SPB
