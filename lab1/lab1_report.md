@@ -94,6 +94,10 @@ topology:
 
 <img width="606" height="698" alt="image" src="https://github.com/user-attachments/assets/6a29f1e6-d876-4717-b018-0a5258ed2584" />
 
+А также схема из draw.io:
+
+<img width="938" height="655" alt="image" src="https://github.com/user-attachments/assets/49736c94-31ff-4e8f-8d60-6b31711fb192" />
+
 
 ### Настройка маршрутизатора R1
 
