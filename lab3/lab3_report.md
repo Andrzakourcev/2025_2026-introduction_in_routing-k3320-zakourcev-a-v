@@ -30,6 +30,11 @@ Date of finished: 01.12.2025
 ---
 
 ## Конфигурации устройств
+
+### Роутеры
+В разделе *system identity* создаётся новый пользователь и удаляется стандартный admin, как и в предыдущих работах.
+
+Далее производится настройка всех интерфейсов в соответствии с топологией. На маршрутизаторах NY и SPB поднимаются DHCP-сервера.
 ```
 /user
 add name=andrey password=andrey group=full
@@ -51,7 +56,17 @@ add address-pool=dhcp-pool disabled=no interface=ether4 name=dhcp-server
 
 /ip dhcp-server network
 add address=192.168.10.0/24 gateway=192.168.10.1
+```
+### Настройка OSPF
+Для динамической маршрутизации используется OSPF:
 
+- создаётся loopback через /interface bridge add name=loopback,  
+  так как он обеспечивает стабильный IP-адрес, не зависящий от физических интерфейсов;
+- на loopback назначается IP-адрес;
+- в разделе /routing ospf instance router-id устанавливается равным IP loopback-а;
+- создаётся одна общая OSPF область 0.0.0.0, так как устройство всего шесть;
+- в /routing ospf network перечисляются все сети, которые должны объявляться в OSPF, включая соединения между маршрутизаторами.
+```
 /interface bridge
 add name=loopback
 
@@ -70,6 +85,16 @@ add area=backbonev2 network=10.20.2.0/30
 add area=backbonev2 network=192.168.10.0/24
 add area=backbonev2 network=10.255.255.1/32
 
+```
+### Настройка MPLS
+После настройки OSPF включаем MPLS:
+
+- в /mpls ldp для transport-address указывается IP loopback-а;
+- lsr-id также устанавливается в адрес loopback-а, так как он уникален и стабилен;
+- опционально можно применять advertise-filter и accept-filter для ограничения того, какие сети получают MPLS-метки — в большой сети это удобно.  
+  В тестах использовался префикс loopback-интерфейсов: обычный трафик 10.20.x.x проходил без меток, а по loopback-адресам уже работал MPLS, что видно по traceroute;
+- через /mpls ldp interface добавляются все интерфейсы маршрутизаторов, на которых должен работать LDP.
+```
 /mpls ldp
 set lsr-id=10.255.255.1
 set enabled=yes transport-address=10.255.255.1
@@ -86,6 +111,15 @@ add accept=no
 add interface=ether2
 add interface=ether3
 
+```
+### Настройка EoMPLS / VPLS
+Для организации L2-соединения между NY и SPB используется VPLS:
+
+- создаётся bridge, к которому будут подключены VPLS-интерфейс и физический порт;
+- в /interface vpls задаётся remote-peer, равный loopback-адресу партнёрского PE-роутера;
+- далее VPLS-интерфейс и нужный физический порт добавляются в bridge.
+
+```
 /interface bridge
 add name=vpn
 
@@ -95,39 +129,7 @@ add disabled=no name=SGIPC remote-peer=10.255.255.6 cisco-style=yes cisco-style-
 /interface bridge port
 add interface=ether2 bridge=vpn
 add interface=SGIPC bridge=vpn
-
 ```
-### Роутеры
-В разделе *system identity* создаётся новый пользователь и удаляется стандартный admin, как и в предыдущих работах.
-
-Далее производится настройка всех интерфейсов в соответствии с топологией. На маршрутизаторах NY и SPB поднимаются DHCP-сервера.
-
-### Настройка OSPF
-Для динамической маршрутизации используется OSPF:
-
-- создаётся loopback через /interface bridge add name=loopback,  
-  так как он обеспечивает стабильный IP-адрес, не зависящий от физических интерфейсов;
-- на loopback назначается IP-адрес;
-- в разделе /routing ospf instance router-id устанавливается равным IP loopback-а;
-- создаётся одна общая OSPF область 0.0.0.0, так как устройство всего шесть;
-- в /routing ospf network перечисляются все сети, которые должны объявляться в OSPF, включая соединения между маршрутизаторами.
-
-### Настройка MPLS
-После настройки OSPF включаем MPLS:
-
-- в /mpls ldp для transport-address указывается IP loopback-а;
-- lsr-id также устанавливается в адрес loopback-а, так как он уникален и стабилен;
-- опционально можно применять advertise-filter и accept-filter для ограничения того, какие сети получают MPLS-метки — в большой сети это удобно.  
-  В тестах использовался префикс loopback-интерфейсов: обычный трафик 10.20.x.x проходил без меток, а по loopback-адресам уже работал MPLS, что видно по traceroute;
-- через /mpls ldp interface добавляются все интерфейсы маршрутизаторов, на которых должен работать LDP.
-
-### Настройка EoMPLS / VPLS
-Для организации L2-соединения между NY и SPB используется VPLS:
-
-- создаётся bridge, к которому будут подключены VPLS-интерфейс и физический порт;
-- в /interface vpls задаётся remote-peer, равный loopback-адресу партнёрского PE-роутера;
-- далее VPLS-интерфейс и нужный физический порт добавляются в bridge.
-
 Соеденение:
 
 ![telegram-cloud-photo-size-2-5291926486870855461-x](https://github.com/user-attachments/assets/cb58b8f0-09b7-4d00-a502-b3744f8e0b1f)
