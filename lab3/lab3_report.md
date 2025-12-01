@@ -62,6 +62,10 @@ Date of finished: 01.12.2025
 - в /interface vpls задаётся remote-peer, равный loopback-адресу партнёрского PE-роутера;
 - далее VPLS-интерфейс и нужный физический порт добавляются в bridge.
 
+Соеденение:
+
+![telegram-cloud-photo-size-2-5291926486870855461-x](https://github.com/user-attachments/assets/cb58b8f0-09b7-4d00-a502-b3744f8e0b1f)
+
 ---
 
 ## Настройка компьютеров
@@ -91,6 +95,8 @@ Date of finished: 01.12.2025
 
 ### 3. VPLS
 VPLS-туннель между NY и SPB успешно поднят, компьютеры на его концах оказываются в одной L2-домене и могут взаимодействовать напрямую.
+
+![telegram-cloud-photo-size-2-5291926486870855456-x](https://github.com/user-attachments/assets/768c1f67-af12-4cba-8b98-1dc1392f22ca)
 
 ---
 
