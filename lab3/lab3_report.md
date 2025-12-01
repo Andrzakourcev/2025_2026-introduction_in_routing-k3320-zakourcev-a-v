@@ -86,9 +86,8 @@ Date of finished: 01.12.2025
 
 ![telegram-cloud-photo-size-2-5291926486870855445-y](https://github.com/user-attachments/assets/5640597b-e674-4545-a14d-a9312705d3fb)
 
-  ![telegram-cloud-photo-size-2-5291926486870855432-y](https://github.com/user-attachments/assets/5188d997-722a-469c-b85e-f2952d9cedcc)
 
-  ![telegram-cloud-photo-size-2-5291926486870855434-y](https://github.com/user-attachments/assets/5df07071-dce4-4415-be54-af92d6cc270d)
+![telegram-cloud-photo-size-2-5291926486870855434-y](https://github.com/user-attachments/assets/5df07071-dce4-4415-be54-af92d6cc270d)
 
 ### 3. VPLS
 VPLS-туннель между NY и SPB успешно поднят, компьютеры на его концах оказываются в одной L2-домене и могут взаимодействовать напрямую.
