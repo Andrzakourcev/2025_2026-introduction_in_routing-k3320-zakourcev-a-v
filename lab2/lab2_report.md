@@ -7,8 +7,8 @@ Faculty: [FPIN](https://fpin.itmo.ru/)
 Course: [Introduction in routing](https://github.com/itmo-ict-faculty/introduction-in-routing)
 Year: 2025/2026
 Group: K3320
-Author: Filianin Ivan Victorovich
-Lab: Lab1
+Author: Zakourcev Andrey Vadimovich
+Lab: Lab2
 Date of create: 09.11.2025
 Date of finished: 09.11.2025
 
