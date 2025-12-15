@@ -228,7 +228,7 @@ MPLS-транспорт функционирует корректно, метк�
 В выводе ip route print where bgp можно увидеть административную дистанцию 200, что выше, чем у OSPF (110). Это означает, что при наличии альтернативных маршрутов предпочтение отдаётся OSPF.
 ![telegram-cloud-photo-size-2-5332384541928263593-y](https://github.com/user-attachments/assets/772ccc29-5017-4c34-8699-030c074138f4)
 
-В выводе routing bgp peer print status все соседи имеют состояние Established, что подтверждает корректность BGP-конфигурации.
+В выводе routing bgp peer print status что состояние Established, что подтверждает корректность BGP-конфигурации.
 
 ## VRF и VPLS
 
