@@ -34,6 +34,37 @@ Date of finished: 15.12.2025
 
 Маршрутизация внутри сети осуществляется исключительно динамически, без использования статических маршрутов.
 
+```
+/routing ospf instance
+add name=inst router-id=10.255.255.4
+
+/routing ospf area
+add name=backbonev2 area-id=0.0.0.0 instance=inst
+
+/routing ospf network
+add area=backbonev2 network=10.20.2.0/30
+add area=backbonev2 network=10.20.11.0/30
+add area=backbonev2 network=10.20.13.0/30
+add area=backbonev2 network=10.255.255.4/32
+
+/mpls ldp
+set lsr-id=10.255.255.4
+set enabled=yes transport-address=10.255.255.4
+
+/mpls ldp advertise-filter 
+add prefix=10.255.255.0/24 advertise=yes
+add advertise=no
+
+/mpls ldp accept-filter 
+add prefix=10.255.255.0/24 accept=yes
+add accept=no
+
+/mpls ldp interface
+add interface=ether2
+add interface=ether3
+add interface=ether4
+```
+
 # Настройка iBGP с Route Reflector
 
 ## Выбор автономной системы
@@ -49,7 +80,11 @@ Date of finished: 15.12.2025
 
 - задан номер AS = 65111;
 - в качестве Router ID используется адрес loopback-интерфейса.
+```
 
+/routing bgp instance
+set default as=65111 router-id=10.255.255.4
+```
 2. В /routing bgp peer:
 
 - настроены BGP-соседи с тем же номером AS;
@@ -57,25 +92,42 @@ Date of finished: 15.12.2025
 - включена поддержка address-families l2vpn и vpnv4;
 - включена роль route reflector для соответствующих маршрутизаторов.
 
+```
+/routing bgp peer
+add name=peerNY remote-address=10.255.255.6 address-families=l2vpn,vpnv4 remote-as=65111 update-source=loopback route-reflect=no
+add name=peerHKI remote-address=10.255.255.2 address-families=l2vpn,vpnv4 remote-as=65111 update-source=loopback route-reflect=yes
+add name=peerLBN remote-address=10.255.255.5 address-families=l2vpn,vpnv4 remote-as=65111 update-source=loopback route-reflect=yes
+```
 3. В /routing bgp network:
    
 - анонсируется loopback-сеть.
-
+```
+/routing bgp network
+add network=10.255.255.0/24
+```
 Важно отметить, что cluster-id для RR не задавался. Все клиентские маршрутизаторы подключены только к одному Route Reflector, и если бы кластерный идентификатор совпадал, маршруты, возвращающиеся через RR, были бы отброшены.
 
 
 ## Настройка VRF (L3VPN)
 
 VRF были настроены на граничных маршрутизаторах.
-
 Последовательность действий:
 
 1. Создан bridge-интерфейс, к которому привязан VRF
-
+```
+/interface bridge 
+add name=br100
+```
 2. Назначен IP-адрес с маской /32 для bridge
-
+```
+/ip address
+add address=10.100.1.2/32 interface=br100
+```
 3. В /ip route vrf:
-
+```
+/ip route vrf
+add export-route-targets=65111:100 import-route-targets=65111:100 interfaces=br100 route-distinguisher=65111:100 routing-mark=VRF_TABLE
+```
 - настроены export-route-targets и import-route-targets
 
 - задан route-distinguisher с использованием AS 65111
@@ -87,6 +139,10 @@ VRF были настроены на граничных маршрутизато
 - включено распространение подключённых маршрутов;
 
 - использован тот же routing-mark.
+```
+/routing bgp instance vrf
+add redistribute-connected=yes routing-mark=VRF_TABLE
+```
 
 Таким образом был реализован L3VPN между удалёнными сегментами сети.
 
@@ -114,12 +170,36 @@ VRF были настроены на граничных маршрутизато
 
 - IP-адрес назначен на bridge-интерфейс
 
+```
+/interface bridge
+add name=vpn
+
+/interface bridge port
+add interface=ether3 bridge=vpn
+
+/interface vpls bgp-vpls
+add bridge=vpn export-route-targets=65111:100 import-route-targets=65111:100 name=vpls route-distinguisher=65111:100 site-id=6
+
+/ip address
+add address=10.100.1.6/24 interface=vpn
+```
+
 ## DHCP-сервер
 
 Для выдачи IP-адресов всем компьютерам в пределах VPLS-сети был выбран один маршрутизатор — Санкт-Петербургский.
 
 На всех маршрутизаторах отключена DHCP-настройка, оставшаяся от первой части работы. На SPB-маршрутизаторе: создан новый DHCP-пул для VPN-сети; настроен DHCP-сервер и привязан к bridge-интерфейсу
 
+```
+/ip pool
+add name=vpn-dhcp-pool ranges=10.100.1.100-10.100.1.254
+
+/ip dhcp-server
+add address-pool=vpn-dhcp-pool disabled=no interface=vpn name=dhcp-vpls
+
+/ip dhcp-server network
+add address=10.100.1.0/24 gateway=10.100.1.1
+```
 ## Настройка компьютеров
 
 Компьютеры были настроены аналогично предыдущим лабораторным работам.
