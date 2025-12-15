@@ -129,21 +129,36 @@ VRF были настроены на граничных маршрутизато
 
 Работа OSPF была проверена через таблицы маршрутизации. Все маршруты получены динамически, без использования статических записей.
 
+![telegram-cloud-photo-size-2-5332384541928263403-x](https://github.com/user-attachments/assets/c11c0077-f5fe-4c71-bc7f-777c5cf70f95)
+
+![telegram-cloud-photo-size-2-5332384541928263404-x](https://github.com/user-attachments/assets/c623c7dc-b8db-42b8-ba08-cd7e668e663f)
+
 ## MPLS
 
 MPLS-транспорт функционирует корректно, метки распространяются между маршрутизаторами.
+![telegram-cloud-photo-size-2-5332384541928263503-y](https://github.com/user-attachments/assets/e2365da1-7ff2-4e72-9bf8-d118b201f720)
+![telegram-cloud-photo-size-2-5332384541928263504-y](https://github.com/user-attachments/assets/87adf00e-0e59-4f1a-bb0a-bbc1fe1d4efc)
 
 ## iBGP
 
 В выводе ip route print where bgp можно увидеть административную дистанцию 200, что выше, чем у OSPF (110). Это означает, что при наличии альтернативных маршрутов предпочтение отдаётся OSPF.
+![telegram-cloud-photo-size-2-5332384541928263593-y](https://github.com/user-attachments/assets/772ccc29-5017-4c34-8699-030c074138f4)
 
 В выводе routing bgp peer print status все соседи имеют состояние Established, что подтверждает корректность BGP-конфигурации.
 
 ## VRF и VPLS
 
 На граничных маршрутизаторах успешно добавлены VRF-маршруты.
+![telegram-cloud-photo-size-2-5332384541928263595-x](https://github.com/user-attachments/assets/f522c3b3-9122-4eb7-b96c-e47bbaee2558)
+
+![telegram-cloud-photo-size-2-5332384541928263596-x](https://github.com/user-attachments/assets/1a66465f-45e0-4820-a0bf-682ed7106a1a)
+
 Во второй части работы проверена раздача IP-адресов через DHCP-сервер на Санкт-Петербургском маршрутизаторе — все компьютеры получили адреса из одной VPN-сети и корректно взаимодействуют между собой.
 
+Пинг:
+![telegram-cloud-photo-size-2-5332384541928263656-y](https://github.com/user-attachments/assets/9d1b3a4f-b589-48c8-8df9-737eddd5dafe)
+![telegram-cloud-photo-size-2-5332384541928263657-y](https://github.com/user-attachments/assets/935928f9-8e9a-404d-b6c0-adf4a8ce65f5)
+![telegram-cloud-photo-size-2-5332384541928263658-y](https://github.com/user-attachments/assets/05b3b8ac-a9d7-43f2-be17-a2a03ff3bde7)
 
 # Заключение
 
