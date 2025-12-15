@@ -45,7 +45,7 @@ Date of finished: 15.12.2025
 
 1. В разделе /routing bgp instance:
 
-- задан номер AS = 65000;
+- задан номер AS = 65111;
 - в качестве Router ID используется адрес loopback-интерфейса.
 
 2. В /routing bgp peer:
@@ -76,7 +76,7 @@ VRF были настроены на граничных маршрутизато
 
 - настроены export-route-targets и import-route-targets
 
-- задан route-distinguisher с использованием AS 65000
+- задан route-distinguisher с использованием AS 65111
 
 - указан routing-mark
 
