@@ -1,7 +1,7 @@
 name: lab4-part2
 mgmt:
   network: my_mgmt-part2
-  ipv4-subnet: 172.20.20.0/24
+  ipv4-subnet: 172.21.21.0/24
 
 topology:
   kinds:
@@ -11,32 +11,32 @@ topology:
   nodes:
     R.SPB:
       kind: vr-ros
-      mgmt-ipv4: 172.20.20.101
-      startup-config: config/part2/r01-spb.rsc
+      mgmt-ipv4: 172.21.21.101
+      startup-config: config/part2/R_SPB.rsc
     R.HKI:
       kind: vr-ros
-      mgmt-ipv4: 172.20.20.102
-      startup-config: config/part2/r01-hki.rsc
+      mgmt-ipv4: 172.21.21.102
+      startup-config: config/part2/R_HKI.rsc
     R.SVL:
       kind: vr-ros
-      mgmt-ipv4: 172.20.20.103
-      startup-config: config/part2/r01-svl.rsc
+      mgmt-ipv4: 172.21.21.103
+      startup-config: config/part2/R_SVL.rsc
     R.LND:
       kind: vr-ros
-      mgmt-ipv4: 172.20.20.104
-      startup-config: config/part2/r01-lnd.rsc
+      mgmt-ipv4: 172.21.21.104
+      startup-config: config/part2/R_LND.rsc
     R.LBN:
       kind: vr-ros
-      mgmt-ipv4: 172.20.20.105
-      startup-config: config/part2/r01-lbn.rsc
+      mgmt-ipv4: 172.21.21.105
+      startup-config: config/part2/R_LBN.rsc
     R.NY:
       kind: vr-ros
-      mgmt-ipv4: 172.20.20.106
-      startup-config: config/part2/r01-ny.rsc
+      mgmt-ipv4: 172.21.21.106
+      startup-config: config/part2/R_NY.rsc
     PC1:
       kind: linux
       image: alpine:latest
-      mgmt-ipv4: 172.20.20.2
+      mgmt-ipv4: 172.21.21.2
       binds:
         - ./config:/config
       exec:
@@ -44,7 +44,7 @@ topology:
     PC2:
       kind: linux
       image: alpine:latest
-      mgmt-ipv4: 172.20.20.3
+      mgmt-ipv4: 172.21.21.3
       binds:
         - ./config:/config
       exec:
@@ -52,7 +52,7 @@ topology:
     PC3:
       kind: linux
       image: alpine:latest
-      mgmt-ipv4: 172.20.20.4
+      mgmt-ipv4: 172.21.21.4
       binds:
         - ./config:/config
       exec:

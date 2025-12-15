@@ -39,6 +39,14 @@ add area=backbonev2 network=10.255.255.3/32
 set lsr-id=10.255.255.3
 set enabled=yes transport-address=10.255.255.3
 
+/mpls ldp advertise-filter 
+add prefix=10.255.255.0/24 advertise=yes
+add advertise=no
+
+/mpls ldp accept-filter 
+add prefix=10.255.255.0/24 accept=yes
+add accept=no
+
 /mpls ldp interface
 add interface=ether2
 
