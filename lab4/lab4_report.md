@@ -20,3 +20,234 @@ Date of finished: 15.12.2025
 
 ## Схема
 
+![telegram-cloud-photo-size-2-5296500360753122170-y](https://github.com/user-attachments/assets/5d5e2e0a-0fdc-48ea-988b-4fc5e1455d33)
+
+## Описание конфигурации
+
+В рамках лабораторной работы была собрана сеть, по структуре схожая с предыдущими заданиями. Топология включает 6 маршрутизаторов и 3 пользовательских компьютера.
+
+Для администрирования используется отдельные сети управления 172.20.16.0/24 и 172.21.21.0/24.
+
+## Настройка маршрутизаторов, OSPF и MPLS
+
+Протоколы OSPF и MPLS были настроены на всех маршрутизаторах. В качестве основы использовались конфигурации из предыдущей лабораторной работы, однако они были адаптированы под новую схему сети: изменены номера интерфейсов и подключаемые подсети.
+
+Маршрутизация внутри сети осуществляется исключительно динамически, без использования статических маршрутов.
+
+```
+/routing ospf instance
+add name=inst router-id=10.255.255.4
+
+/routing ospf area
+add name=backbonev2 area-id=0.0.0.0 instance=inst
+
+/routing ospf network
+add area=backbonev2 network=10.20.2.0/30
+add area=backbonev2 network=10.20.11.0/30
+add area=backbonev2 network=10.20.13.0/30
+add area=backbonev2 network=10.255.255.4/32
+
+/mpls ldp
+set lsr-id=10.255.255.4
+set enabled=yes transport-address=10.255.255.4
+
+/mpls ldp advertise-filter 
+add prefix=10.255.255.0/24 advertise=yes
+add advertise=no
+
+/mpls ldp accept-filter 
+add prefix=10.255.255.0/24 accept=yes
+add accept=no
+
+/mpls ldp interface
+add interface=ether2
+add interface=ether3
+add interface=ether4
+```
+
+# Настройка iBGP с Route Reflector
+
+## Выбор автономной системы
+
+Поскольку вся сеть находится под единым административным управлением, была выбрана одна автономная система. Использован приватный номер AS — 65111.
+
+## Конфигурация iBGP
+Для обмена маршрутами применяется iBGP, так как все маршрутизаторы принадлежат одной AS.
+
+Основные этапы настройки:
+
+1. В разделе /routing bgp instance:
+
+- задан номер AS = 65111;
+- в качестве Router ID используется адрес loopback-интерфейса.
+```
+
+/routing bgp instance
+set default as=65111 router-id=10.255.255.4
+```
+2. В /routing bgp peer:
+
+- настроены BGP-соседи с тем же номером AS;
+- указаны loopback-адреса в качестве remote-address;
+- включена поддержка address-families l2vpn и vpnv4;
+- включена роль route reflector для соответствующих маршрутизаторов.
+
+```
+/routing bgp peer
+add name=peerNY remote-address=10.255.255.6 address-families=l2vpn,vpnv4 remote-as=65111 update-source=loopback route-reflect=no
+add name=peerHKI remote-address=10.255.255.2 address-families=l2vpn,vpnv4 remote-as=65111 update-source=loopback route-reflect=yes
+add name=peerLBN remote-address=10.255.255.5 address-families=l2vpn,vpnv4 remote-as=65111 update-source=loopback route-reflect=yes
+```
+3. В /routing bgp network:
+   
+- анонсируется loopback-сеть.
+```
+/routing bgp network
+add network=10.255.255.0/24
+```
+Важно отметить, что cluster-id для RR не задавался. Все клиентские маршрутизаторы подключены только к одному Route Reflector, и если бы кластерный идентификатор совпадал, маршруты, возвращающиеся через RR, были бы отброшены.
+
+
+## Настройка VRF (L3VPN)
+
+VRF были настроены на граничных маршрутизаторах.
+Последовательность действий:
+
+1. Создан bridge-интерфейс, к которому привязан VRF
+```
+/interface bridge 
+add name=br100
+```
+2. Назначен IP-адрес с маской /32 для bridge
+```
+/ip address
+add address=10.100.1.2/32 interface=br100
+```
+3. В /ip route vrf:
+```
+/ip route vrf
+add export-route-targets=65111:100 import-route-targets=65111:100 interfaces=br100 route-distinguisher=65111:100 routing-mark=VRF_TABLE
+```
+- настроены export-route-targets и import-route-targets
+
+- задан route-distinguisher с использованием AS 65111
+
+- указан routing-mark
+
+4. В /routing bgp instance vrf:
+
+- включено распространение подключённых маршрутов;
+
+- использован тот же routing-mark.
+```
+/routing bgp instance vrf
+add redistribute-connected=yes routing-mark=VRF_TABLE
+```
+
+Таким образом был реализован L3VPN между удалёнными сегментами сети.
+
+# Часть 2. Настройка VPLS
+
+В отличие от первой части работы, здесь дополнительно потребовалась настройка VPLS.
+
+## MPLS LDP
+
+В /mpls ldp interface был явно указан интерфейс, который соединён с пользовательским компьютером.
+
+## Конфигурация VPLS на граничных маршрутизаторах
+
+На каждом из трёх внешних маршрутизаторов выполнены следующие шаги:
+
+- Создан bridge-интерфейс
+
+- В bridge добавлен порт, направленный к компьютеру.
+
+- Настроен /interface vpls bgp-vpls:
+
+- использованы те же route-target’ы, что и для VRF
+
+- вместо routing-mark задан уникальный site-id для каждого маршрутизатора
+
+- IP-адрес назначен на bridge-интерфейс
+
+```
+/interface bridge
+add name=vpn
+
+/interface bridge port
+add interface=ether3 bridge=vpn
+
+/interface vpls bgp-vpls
+add bridge=vpn export-route-targets=65111:100 import-route-targets=65111:100 name=vpls route-distinguisher=65111:100 site-id=6
+
+/ip address
+add address=10.100.1.6/24 interface=vpn
+```
+
+## DHCP-сервер
+
+Для выдачи IP-адресов всем компьютерам в пределах VPLS-сети был выбран один маршрутизатор — Санкт-Петербургский.
+
+На всех маршрутизаторах отключена DHCP-настройка, оставшаяся от первой части работы. На SPB-маршрутизаторе: создан новый DHCP-пул для VPN-сети; настроен DHCP-сервер и привязан к bridge-интерфейсу
+
+```
+/ip pool
+add name=vpn-dhcp-pool ranges=10.100.1.100-10.100.1.254
+
+/ip dhcp-server
+add address-pool=vpn-dhcp-pool disabled=no interface=vpn name=dhcp-vpls
+
+/ip dhcp-server network
+add address=10.100.1.0/24 gateway=10.100.1.1
+```
+## Настройка компьютеров
+
+Компьютеры были настроены аналогично предыдущим лабораторным работам.
+Каждое устройство получает IP-адрес автоматически по DHCP через интерфейс eth1. Во второй части работы DHCP-сервер расположен на SPB-маршрутизаторе.
+
+# Проверка результатов
+
+## OSPF
+
+Работа OSPF была проверена через таблицы маршрутизации. Все маршруты получены динамически, без использования статических записей.
+
+![telegram-cloud-photo-size-2-5332384541928263403-x](https://github.com/user-attachments/assets/c11c0077-f5fe-4c71-bc7f-777c5cf70f95)
+
+![telegram-cloud-photo-size-2-5332384541928263404-x](https://github.com/user-attachments/assets/c623c7dc-b8db-42b8-ba08-cd7e668e663f)
+
+## MPLS
+
+MPLS-транспорт функционирует корректно, метки распространяются между маршрутизаторами.
+
+![telegram-cloud-photo-size-2-5332384541928263503-y](https://github.com/user-attachments/assets/e2365da1-7ff2-4e72-9bf8-d118b201f720)
+
+![telegram-cloud-photo-size-2-5332384541928263504-y](https://github.com/user-attachments/assets/87adf00e-0e59-4f1a-bb0a-bbc1fe1d4efc)
+
+## iBGP
+
+В выводе ip route print where bgp можно увидеть административную дистанцию 200, что выше, чем у OSPF (110). Это означает, что при наличии альтернативных маршрутов предпочтение отдаётся OSPF.
+![telegram-cloud-photo-size-2-5332384541928263593-y](https://github.com/user-attachments/assets/772ccc29-5017-4c34-8699-030c074138f4)
+
+В выводе routing bgp peer print status все соседи имеют состояние Established, что подтверждает корректность BGP-конфигурации.
+
+## VRF и VPLS
+
+На граничных маршрутизаторах успешно добавлены VRF-маршруты.
+![telegram-cloud-photo-size-2-5332384541928263595-x](https://github.com/user-attachments/assets/f522c3b3-9122-4eb7-b96c-e47bbaee2558)
+
+![telegram-cloud-photo-size-2-5332384541928263596-x](https://github.com/user-attachments/assets/1a66465f-45e0-4820-a0bf-682ed7106a1a)
+
+Во второй части работы проверена раздача IP-адресов через DHCP-сервер на Санкт-Петербургском маршрутизаторе — все компьютеры получили адреса из одной VPN-сети и корректно взаимодействуют между собой.
+
+Пинг:
+
+![telegram-cloud-photo-size-2-5332384541928263656-y](https://github.com/user-attachments/assets/9d1b3a4f-b589-48c8-8df9-737eddd5dafe)
+
+![telegram-cloud-photo-size-2-5332384541928263657-y](https://github.com/user-attachments/assets/935928f9-8e9a-404d-b6c0-adf4a8ce65f5)
+
+![telegram-cloud-photo-size-2-5332384541928263658-y](https://github.com/user-attachments/assets/05b3b8ac-a9d7-43f2-be17-a2a03ff3bde7)
+
+# Заключение
+
+В ходе лабораторной работы была развернута IP/MPLS-сеть. В сети успешно настроены протоколы OSPF, MPLS и iBGP с использованием Route Reflector.
+В первой части была реализована L3VPN на основе VRF, во второй части — VPLS для объединения удалённых сегментов в единую широковещательную доменную сеть. Все элементы сети функционируют корректно, поставленные задачи выполнены полностью. Цель лабораторной работы достигнута.
