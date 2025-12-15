@@ -218,7 +218,9 @@ add address=10.100.1.0/24 gateway=10.100.1.1
 ## MPLS
 
 MPLS-транспорт функционирует корректно, метки распространяются между маршрутизаторами.
+
 ![telegram-cloud-photo-size-2-5332384541928263503-y](https://github.com/user-attachments/assets/e2365da1-7ff2-4e72-9bf8-d118b201f720)
+
 ![telegram-cloud-photo-size-2-5332384541928263504-y](https://github.com/user-attachments/assets/87adf00e-0e59-4f1a-bb0a-bbc1fe1d4efc)
 
 ## iBGP
@@ -238,8 +240,11 @@ MPLS-транспорт функционирует корректно, метк�
 Во второй части работы проверена раздача IP-адресов через DHCP-сервер на Санкт-Петербургском маршрутизаторе — все компьютеры получили адреса из одной VPN-сети и корректно взаимодействуют между собой.
 
 Пинг:
+
 ![telegram-cloud-photo-size-2-5332384541928263656-y](https://github.com/user-attachments/assets/9d1b3a4f-b589-48c8-8df9-737eddd5dafe)
+
 ![telegram-cloud-photo-size-2-5332384541928263657-y](https://github.com/user-attachments/assets/935928f9-8e9a-404d-b6c0-adf4a8ce65f5)
+
 ![telegram-cloud-photo-size-2-5332384541928263658-y](https://github.com/user-attachments/assets/05b3b8ac-a9d7-43f2-be17-a2a03ff3bde7)
 
 # Заключение
